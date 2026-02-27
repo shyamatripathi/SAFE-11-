@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SAFE Registration</title>
+</head>
+<body>
+    <h2>User Registration</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <h3>Account Information</h3>
+        {{ user_form.as_p }}
+
+        <h3>Health Information</h3>
+        {{ profile_form.as_p }}
+
+        <button type="submit">Register</button>
+    </form>
+</body>
+</html>
