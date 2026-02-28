@@ -1,8 +1,6 @@
 from django.db import models
-
-# Create your models here.
-from django.db import models
 from django.contrib.auth.models import User
+
 
 class HealthProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -17,27 +15,58 @@ class HealthProfile(models.Model):
 
     severity = models.CharField(max_length=20, blank=True)
 
+    # ---------- Utility Methods ----------
+
     def calculate_bmi(self):
-        return self.weight / ((self.height / 100) ** 2)
+        if self.height and self.weight:
+            return self.weight / ((self.height / 100) ** 2)
+        return None
 
     def calculate_severity(self):
         score = 0
+        symptom_text = self.symptoms.lower()
 
-        if self.age > 60:
+        # Age factor
+        if self.age >= 60:
             score += 2
+        elif self.age >= 45:
+            score += 1
 
-        if self.bmi and self.bmi > 30:
-            score += 2
+        # BMI factor
+        if self.bmi:
+            if self.bmi >= 30:
+                score += 2
+            elif self.bmi >= 25:
+                score += 1
 
-        if "chest pain" in self.symptoms.lower():
-            score += 3
-
+        # Heart history
         if self.heart_history:
             score += 3
 
-        if score >= 6:
+        # ---------- Symptom-based scoring ----------
+
+        symptom_weights = {
+            "chest pain": 3,
+            "shortness of breath": 3,
+            "fever": 2,
+            "cough": 1,
+            "cold": 1,
+            "headache": 1,
+            "nausea": 1,
+            "dizziness": 2,
+            "fatigue": 1,
+            "vomiting": 2
+        }
+
+        for symptom, weight in symptom_weights.items():
+            if symptom in symptom_text:
+                score += weight
+
+        # ---------- Final Severity Classification ----------
+
+        if score >= 8:
             return "High"
-        elif score >= 3:
+        elif score >= 4:
             return "Moderate"
         else:
             return "Mild"
