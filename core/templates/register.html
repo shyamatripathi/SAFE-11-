@@ -1,21 +1,1110 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>SAFE Registration</title>
+<title>SAFE Registration</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #020508;
+    --surface: #07111f;
+    --surface2: #0b1828;
+    --border: #0f2540;
+    --border-hi: #163358;
+    --accent: #2f8fff;
+    --accent-soft: #87ceeb;
+    --accent-dim: rgba(47, 143, 255, 0.10);
+    --accent-glow: rgba(47, 143, 255, 0.25);
+    --text: #d6e8ff;
+    --muted: #3a5a7a;
+    --error: #ff5e5e;
+    --green: #4ade80;
+    --cyan: #22d3ee;
+    --pink: #f472b6;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    min-height: 100vh;
+    background: var(--bg);
+    font-family: 'DM Mono', monospace;
+    color: var(--text);
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* ── BACKGROUND LAYERS ── */
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(47, 143, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(47, 143, 255, 0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    width: 1000px;
+    height: 1000px;
+    background: radial-gradient(circle, rgba(47, 143, 255, 0.08) 0%, rgba(34,211,238,0.02) 35%, transparent 65%);
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .noise {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .bg-glow-bottom {
+    position: fixed;
+    bottom: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(135,206,235,0.04) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .watermark {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(120px, 22vw, 300px);
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(135, 206, 235, 0.06);
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 0;
+    user-select: none;
+    animation: watermarkPulse 6s ease-in-out infinite;
+  }
+
+  @keyframes watermarkPulse {
+    0%, 100% { -webkit-text-stroke-color: rgba(135, 206, 235, 0.06); }
+    50%      { -webkit-text-stroke-color: rgba(135, 206, 235, 0.13); }
+  }
+
+  /* ── FLOATING HEALTHCARE ICONS ── */
+  .float-icons {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .float-icon {
+    position: absolute;
+    font-size: 22px;
+    opacity: 0;
+    animation: floatUp linear infinite;
+    filter: blur(0.4px);
+  }
+
+  @keyframes floatUp {
+    0%  { opacity: 0; transform: translateY(100vh) rotate(0deg) scale(0.8); }
+    8%  { opacity: 0.1; }
+    92% { opacity: 0.1; }
+    100%{ opacity: 0; transform: translateY(-10vh) rotate(360deg) scale(1.1); }
+  }
+
+  .float-icon:nth-child(1)  { left: 4%;  animation-duration: 20s; animation-delay: 0s; font-size: 18px; }
+  .float-icon:nth-child(2)  { left: 14%; animation-duration: 24s; animation-delay: 3s; font-size: 16px; }
+  .float-icon:nth-child(3)  { left: 26%; animation-duration: 22s; animation-delay: 7s; font-size: 20px; }
+  .float-icon:nth-child(4)  { left: 36%; animation-duration: 26s; animation-delay: 1s; font-size: 14px; }
+  .float-icon:nth-child(5)  { left: 48%; animation-duration: 21s; animation-delay: 9s; font-size: 18px; }
+  .float-icon:nth-child(6)  { left: 58%; animation-duration: 23s; animation-delay: 4s; font-size: 22px; }
+  .float-icon:nth-child(7)  { left: 68%; animation-duration: 25s; animation-delay: 11s; font-size: 16px; }
+  .float-icon:nth-child(8)  { left: 78%; animation-duration: 19s; animation-delay: 2s; font-size: 20px; }
+  .float-icon:nth-child(9)  { left: 88%; animation-duration: 27s; animation-delay: 6s; font-size: 14px; }
+  .float-icon:nth-child(10) { left: 8%;  animation-duration: 22s; animation-delay: 13s; font-size: 20px; }
+  .float-icon:nth-child(11) { left: 42%; animation-duration: 28s; animation-delay: 5s; font-size: 12px; }
+  .float-icon:nth-child(12) { left: 72%; animation-duration: 20s; animation-delay: 10s; font-size: 18px; }
+
+  /* ── MEDICAL CROSS MARKERS ── */
+  .cross-markers {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .cross-mark {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    opacity: 0;
+    animation: crossFade 7s ease-in-out infinite;
+  }
+
+  .cross-mark::before,
+  .cross-mark::after {
+    content: '';
+    position: absolute;
+    background: var(--accent-soft);
+    border-radius: 1px;
+  }
+
+  .cross-mark::before { width: 2px; height: 14px; left: 6px; top: 0; }
+  .cross-mark::after  { width: 14px; height: 2px; left: 0; top: 6px; }
+
+  @keyframes crossFade {
+    0%, 100% { opacity: 0; transform: rotate(0deg) scale(0.8); }
+    50%      { opacity: 0.1; transform: rotate(90deg) scale(1); }
+  }
+
+  .cross-mark:nth-child(1) { top: 10%; right: 16%; animation-delay: 0s; }
+  .cross-mark:nth-child(2) { bottom: 18%; left: 10%; animation-delay: 2.3s; }
+  .cross-mark:nth-child(3) { top: 30%; left: 6%; animation-delay: 4.6s; }
+  .cross-mark:nth-child(4) { bottom: 8%; right: 8%; animation-delay: 1.2s; }
+  .cross-mark:nth-child(5) { top: 55%; right: 5%; animation-delay: 3.5s; }
+  .cross-mark:nth-child(6) { top: 70%; left: 14%; animation-delay: 5.8s; }
+
+  /* ── PULSE RINGS ── */
+  .pulse-rings {
+    position: fixed;
+    top: 100px;
+    left: 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .p-ring {
+    width: 60px;
+    height: 60px;
+    border: 1px solid rgba(47, 143, 255, 0.15);
+    border-radius: 50%;
+    position: absolute;
+    top: 0; left: 0;
+    animation: pRingExpand 4s ease-out infinite;
+  }
+
+  .p-ring:nth-child(2) { animation-delay: 1.3s; }
+  .p-ring:nth-child(3) { animation-delay: 2.6s; }
+
+  @keyframes pRingExpand {
+    0%   { transform: scale(0.3); opacity: 0.6; }
+    100% { transform: scale(2.5); opacity: 0; }
+  }
+
+  .p-core {
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: absolute;
+    top: 26px; left: 26px;
+    box-shadow: 0 0 14px var(--accent-glow);
+    animation: pCorePulse 2s infinite;
+  }
+
+  @keyframes pCorePulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50%      { transform: scale(0.6); opacity: 0.4; }
+  }
+
+  .pulse-rings-br {
+    position: fixed;
+    bottom: 80px;
+    right: 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .pulse-rings-br .p-ring {
+    border-color: rgba(135, 206, 235, 0.12);
+    animation-duration: 5s;
+  }
+
+  .pulse-rings-br .p-core {
+    background: var(--accent-soft);
+    box-shadow: 0 0 14px rgba(135,206,235,0.3);
+  }
+
+  /* ── DNA HELIX ── */
+  .dna-helix {
+    position: fixed;
+    right: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.06;
+  }
+
+  .dna-strand {
+    width: 40px;
+    height: 350px;
+    position: relative;
+  }
+
+  .dna-dot {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: dnaBob 3s ease-in-out infinite;
+  }
+
+  @keyframes dnaBob {
+    0%, 100% { transform: translateX(0); opacity: 0.5; }
+    50%      { transform: translateX(20px); opacity: 1; }
+  }
+
+  .dna-dot:nth-child(even) {
+    animation-name: dnaBobRev;
+    background: var(--accent-soft);
+  }
+
+  @keyframes dnaBobRev {
+    0%, 100% { transform: translateX(20px); opacity: 0.5; }
+    50%      { transform: translateX(0); opacity: 1; }
+  }
+
+  /* ── FULL-PAGE LAYOUT ── */
+  .page-shell {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 36px 80px;
+  }
+
+  /* ══════════════════════════════════════
+     HERO HEADER — ANIMATED
+     ══════════════════════════════════════ */
+  .hero {
+    padding: 56px 0 40px;
+    text-align: center;
+  }
+
+  /* Badge */
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent-soft);
+    margin-bottom: 24px;
+    animation: fadeSlideDown 0.6s 0.1s ease both;
+  }
+
+  .hero-badge-dot {
+    width: 6px; height: 6px;
+    background: var(--accent-soft);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--accent-soft);
+    position: relative;
+    animation: pulse 2s infinite;
+  }
+
+  .hero-badge-dot::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 1px solid rgba(135,206,235,0.3);
+    animation: badgeRing 2s infinite;
+  }
+
+  @keyframes badgeRing {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50%      { transform: scale(1.8); opacity: 0; }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* Shield icon */
+  .hero-icon {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 28px;
+    position: relative;
+  }
+
+  .hero-icon svg { width: 100%; height: 100%; }
+
+  .shield-path {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1.5;
+    stroke-dasharray: 200;
+    stroke-dashoffset: 200;
+    animation: drawShield 1.8s 0.3s ease forwards;
+  }
+
+  .cross-icon-path {
+    fill: none;
+    stroke: var(--accent-soft);
+    stroke-width: 2;
+    stroke-dasharray: 40;
+    stroke-dashoffset: 40;
+    animation: drawShield 0.8s 1.8s ease forwards;
+  }
+
+  @keyframes drawShield {
+    to { stroke-dashoffset: 0; }
+  }
+
+  .hero-icon-glow {
+    position: absolute;
+    inset: -14px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(47,143,255,0.18) 0%, transparent 70%);
+    animation: iconGlow 3s ease-in-out infinite;
+  }
+
+  @keyframes iconGlow {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50%      { opacity: 1; transform: scale(1.15); }
+  }
+
+  /* Main heading */
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(34px, 5.5vw, 58px);
+    font-weight: 400;
+    line-height: 1.12;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .welcome-line {
+    display: block;
+    animation: fadeSlideDown 0.8s 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .safe-word {
+    display: inline-block;
+    font-style: italic;
+    background: linear-gradient(90deg, #2f8fff, #87ceeb, #22d3ee, #2f8fff);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: fadeSlideUp 0.8s 0.5s cubic-bezier(0.22, 1, 0.36, 1) both, gradientShift 5s ease-in-out infinite;
+    position: relative;
+  }
+
+  /* Animated underline glow under "SAFE" */
+  .safe-word::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #2f8fff, #87ceeb, #2f8fff, transparent);
+    border-radius: 2px;
+    animation: underlineGlow 3s ease-in-out infinite;
+  }
+
+  @keyframes underlineGlow {
+    0%, 100% { opacity: 0.3; transform: scaleX(0.7); }
+    50%      { opacity: 0.8; transform: scaleX(1); }
+  }
+
+  @keyframes gradientShift {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  @keyframes fadeSlideDown {
+    from { opacity: 0; transform: translateY(-18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Full subtitle — word-by-word animated */
+  .hero-subtitle {
+    margin-top: 18px;
+    font-size: clamp(12px, 1.8vw, 16px);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    line-height: 1.6;
+    overflow: hidden;
+  }
+
+  .hero-subtitle .word {
+    display: inline-block;
+    animation: wordReveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes wordReveal {
+    from { opacity: 0; transform: translateY(14px) scale(0.95); filter: blur(6px); }
+    to   { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+  }
+
+  .hero-subtitle .word:nth-child(1)  { animation-delay: 0.7s; }
+  .hero-subtitle .word:nth-child(2)  { animation-delay: 0.82s; }
+  .hero-subtitle .word:nth-child(3)  { animation-delay: 0.94s; }
+  .hero-subtitle .word:nth-child(4)  { animation-delay: 1.06s; }
+  .hero-subtitle .word:nth-child(5)  { animation-delay: 1.18s; }
+
+  .hero-subtitle .word.amp {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* Heartbeat ECG line under heading */
+  .hero-ecg {
+    width: 320px;
+    height: 28px;
+    margin: 24px auto 0;
+    opacity: 0.3;
+    animation: fadeSlideUp 0.6s 1.4s ease both;
+  }
+
+  .hero-ecg svg { width: 100%; height: 100%; }
+
+  .hero-ecg-line {
+    stroke: var(--accent);
+    stroke-width: 1.5;
+    fill: none;
+    stroke-dasharray: 500;
+    stroke-dashoffset: 500;
+    animation: drawECG 3s 1.6s ease forwards;
+  }
+
+  @keyframes drawECG {
+    to { stroke-dashoffset: 0; }
+  }
+
+  /* Decorative description */
+  .hero-desc {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 16px;
+    animation: fadeSlideUp 0.5s 1.5s ease both;
+    letter-spacing: 0.03em;
+  }
+
+  /* ── HERO DIVIDER ── */
+  .hero-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), var(--accent), var(--accent-soft), var(--accent), var(--border), transparent);
+    margin: 0 auto 44px;
+    max-width: 700px;
+    animation: fadeSlideUp 0.6s 1.6s ease both;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-bar {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 36px;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    animation: fadeSlideUp 0.5s 0.5s ease both;
+  }
+
+  .progress-bar span {
+    flex: 1;
+    height: 3px;
+    background: var(--border);
+    border-radius: 3px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .progress-bar span.active {
+    background: linear-gradient(90deg, #2f8fff, #87ceeb);
+    box-shadow: 0 0 10px rgba(47,143,255,0.2);
+  }
+
+  .progress-bar span.active::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+    animation: shimmer 2s ease-in-out infinite;
+  }
+
+  @keyframes shimmer {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  /* ══════════════════════════════════════
+     FORM CONTAINER — FULL WIDTH
+     ══════════════════════════════════════ */
+  .form-container {
+    background: rgba(7, 17, 31, 0.85);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 48px 56px 56px;
+    position: relative;
+    overflow: hidden;
+    animation: rise 0.7s 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.4), 0 0 120px rgba(47,143,255,0.03);
+  }
+
+  .form-container::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    border-radius: 14px 14px 0 0;
+    background: linear-gradient(90deg, transparent, #2f8fff, #87ceeb, #2f8fff, transparent);
+  }
+
+  .form-container::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    border-radius: 0 0 14px 14px;
+    background: linear-gradient(90deg, transparent, rgba(47,143,255,0.06), transparent);
+  }
+
+  /* Scanning line */
+  .form-scan {
+    position: absolute;
+    left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(47,143,255,0.12), transparent);
+    pointer-events: none;
+    animation: scanline 7s linear infinite;
+    opacity: 0.3;
+    border-radius: 14px;
+  }
+
+  @keyframes scanline {
+    0%   { top: 0%; }
+    100% { top: 100%; }
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── TWO-COLUMN FORM GRID ── */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 44px;
+  }
+
+  @media (max-width: 768px) {
+    .form-grid { grid-template-columns: 1fr; gap: 28px; }
+  }
+
+  .form-section {
+    animation: fadeSlideUp 0.6s 0.4s ease both;
+  }
+
+  .form-section:nth-child(2) {
+    animation-delay: 0.55s;
+  }
+
+  /* ── SECTION LABELS ── */
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent-soft);
+    margin-bottom: 24px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+
+  .section-num {
+    width: 26px;
+    height: 26px;
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    flex-shrink: 0;
+    color: var(--accent);
+    background: rgba(47,143,255,0.06);
+    transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+  }
+
+  .section-label:hover .section-num {
+    background: rgba(47,143,255,0.14);
+    box-shadow: 0 0 16px rgba(47,143,255,0.2);
+    transform: scale(1.05);
+  }
+
+  .section-icon {
+    font-size: 14px;
+    opacity: 0.5;
+  }
+
+  /* ── FORM FIELD STYLES ── */
+  form p {
+    margin-bottom: 18px;
+  }
+
+  form p label, label {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+    font-family: 'DM Mono', monospace;
+    transition: color 0.2s;
+  }
+
+  form p:focus-within label {
+    color: var(--accent-soft);
+  }
+
+  form p input[type="text"],
+  form p input[type="email"],
+  form p input[type="password"],
+  form p input[type="number"],
+  form p input[type="date"],
+  form p input[type="tel"],
+  form p select,
+  form p textarea,
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="date"],
+  input[type="tel"],
+  select,
+  textarea {
+    width: 100%;
+    background: rgba(2, 5, 8, 0.8);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    padding: 14px 16px;
+    outline: none;
+    transition: border-color 0.25s, box-shadow 0.25s, background 0.25s, transform 0.15s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  form p input::placeholder, input::placeholder { color: var(--muted); }
+
+  form p input:focus,
+  form p select:focus,
+  form p textarea:focus,
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+    box-shadow: 0 0 0 3px rgba(47, 143, 255, 0.1), 0 0 28px rgba(47, 143, 255, 0.06);
+    transform: translateY(-1px);
+  }
+
+  form p select, select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%233a5a7a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 40px;
+    cursor: pointer;
+  }
+
+  form p select option { background: #07111f; }
+
+  form p textarea, textarea {
+    resize: vertical;
+    min-height: 90px;
+    border-radius: 8px;
+  }
+
+  form p input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #2f8fff;
+    margin-right: 8px;
+    cursor: pointer;
+    vertical-align: middle;
+  }
+
+  form p input[type="radio"] {
+    accent-color: #2f8fff;
+    margin-right: 6px;
+    cursor: pointer;
+  }
+
+  ul.errorlist { list-style: none; margin-top: 6px; }
+
+  ul.errorlist li {
+    font-size: 11px;
+    color: var(--error);
+    padding: 6px 12px;
+    border-left: 2px solid var(--error);
+    border-radius: 0 4px 4px 0;
+    background: rgba(255, 94, 94, 0.06);
+    margin-bottom: 4px;
+    animation: shakeIn 0.5s ease both;
+  }
+
+  @keyframes shakeIn {
+    0%   { opacity: 0; transform: translateX(-6px); }
+    40%  { transform: translateX(3px); }
+    70%  { transform: translateX(-2px); }
+    100% { opacity: 1; transform: translateX(0); }
+  }
+
+  form p span.helptext, .helptext {
+    display: block;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 6px;
+    line-height: 1.5;
+  }
+
+  /* ── SUBMIT SECTION ── */
+  .submit-section {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    margin-top: 12px;
+  }
+
+  button[type="submit"] {
+    width: 100%;
+    max-width: 440px;
+    margin: 0 auto;
+    display: block;
+    padding: 18px 36px;
+    background: linear-gradient(90deg, #1a6fd4, #2f8fff, #4da3ff);
+    background-size: 200% 100%;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+    animation: gradientBtn 4s ease-in-out infinite;
+  }
+
+  @keyframes gradientBtn {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  button[type="submit"]::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(135,206,235,0.3), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.5s;
+  }
+
+  button[type="submit"]:hover::after { transform: translateX(100%); }
+
+  button[type="submit"]:hover {
+    box-shadow:
+      0 0 40px rgba(47, 143, 255, 0.45),
+      0 0 80px rgba(47, 143, 255, 0.12),
+      0 6px 24px rgba(0,0,0,0.3);
+    transform: translateY(-3px);
+  }
+
+  button[type="submit"]:active { transform: translateY(0); }
+
+  /* ── FOOTER ── */
+  .page-footer {
+    text-align: center;
+    padding: 40px 0 0;
+    animation: fadeSlideUp 0.6s 0.7s ease both;
+  }
+
+  .page-footer p {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 18px;
+  }
+
+  .page-footer a {
+    color: var(--accent-soft);
+    text-decoration: none;
+    transition: opacity 0.2s, text-shadow 0.2s;
+    position: relative;
+  }
+
+  .page-footer a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0; right: 0;
+    height: 1px;
+    background: var(--accent-soft);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+  }
+
+  .page-footer a:hover::after { transform: scaleX(1); }
+  .page-footer a:hover { text-shadow: 0 0 14px rgba(135,206,235,0.3); }
+
+  .info-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    opacity: 0.4;
+  }
+
+  .info-dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--muted);
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .page-shell { padding: 0 14px 60px; }
+    .form-container { padding: 32px 20px 36px; }
+    .hero { padding: 36px 0 28px; }
+    .hero h1 { font-size: 28px; }
+    .hero-ecg { width: 200px; }
+    .dna-helix, .pulse-rings, .pulse-rings-br { display: none; }
+  }
+</style>
 </head>
 <body>
-    <h2>User Registration</h2>
+
+<div class="noise"></div>
+<div class="bg-glow-bottom"></div>
+<div class="watermark">SAFE</div>
+
+<!-- Floating healthcare icons -->
+<div class="float-icons">
+  <span class="float-icon">&#9829;</span>
+  <span class="float-icon">&#9878;</span>
+  <span class="float-icon">&#10010;</span>
+  <span class="float-icon">&#9733;</span>
+  <span class="float-icon">&#9829;</span>
+  <span class="float-icon">&#10010;</span>
+  <span class="float-icon">&#9878;</span>
+  <span class="float-icon">&#9733;</span>
+  <span class="float-icon">&#10010;</span>
+  <span class="float-icon">&#9829;</span>
+  <span class="float-icon">&#9878;</span>
+  <span class="float-icon">&#10010;</span>
+</div>
+
+<!-- Medical cross markers -->
+<div class="cross-markers">
+  <div class="cross-mark"></div>
+  <div class="cross-mark"></div>
+  <div class="cross-mark"></div>
+  <div class="cross-mark"></div>
+  <div class="cross-mark"></div>
+  <div class="cross-mark"></div>
+</div>
+
+<!-- Pulse rings -->
+<div class="pulse-rings">
+  <div class="p-ring"></div>
+  <div class="p-ring"></div>
+  <div class="p-ring"></div>
+  <div class="p-core"></div>
+</div>
+
+<div class="pulse-rings-br">
+  <div class="p-ring"></div>
+  <div class="p-ring"></div>
+  <div class="p-ring"></div>
+  <div class="p-core"></div>
+</div>
+
+<!-- DNA helix -->
+<div class="dna-helix">
+  <div class="dna-strand" id="dnaStrand"></div>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!-- FULL-PAGE CONTENT                  -->
+<!-- ═══════════════════════════════════ -->
+<div class="page-shell">
+
+  <!-- ══ HERO HEADER ══ -->
+  <div class="hero">
+    <div class="hero-badge">
+      <span class="hero-badge-dot"></span>
+      New Account
+    </div>
+
+    <!-- Animated shield icon -->
+    <div class="hero-icon">
+      <div class="hero-icon-glow"></div>
+      <svg viewBox="0 0 48 48">
+        <path class="shield-path" d="M24,4 L40,12 C40,12 42,28 24,44 C6,28 8,12 8,12 Z"/>
+        <line class="cross-icon-path" x1="24" y1="18" x2="24" y2="32"/>
+        <line class="cross-icon-path" x1="17" y1="25" x2="31" y2="25"/>
+      </svg>
+    </div>
+
+    <!-- Main animated heading -->
+    <h1>
+      <span class="welcome-line">Welcome to</span>
+      <span class="safe-word">SAFE</span>
+    </h1>
+
+    <!-- Word-by-word animated subtitle -->
+    <div class="hero-subtitle">
+      <span class="word">Symptoms</span>&nbsp;
+      <span class="word">Analysis</span>&nbsp;
+      <span class="word amp">&amp;</span>&nbsp;
+      <span class="word">Forecasting</span>&nbsp;
+      <span class="word">Engine</span>
+    </div>
+
+    <!-- ECG heartbeat line -->
+    <div class="hero-ecg">
+      <svg viewBox="0 0 320 28" preserveAspectRatio="none">
+        <path class="hero-ecg-line" d="M0,14 L50,14 L65,4 L75,24 L85,4 L100,24 L110,14 L160,14 L175,6 L185,22 L195,6 L210,22 L220,14 L320,14"/>
+      </svg>
+    </div>
+
+    <p class="hero-desc">Complete both sections below to create your secure health account</p>
+  </div>
+
+  <div class="hero-divider"></div>
+
+  <!-- Progress -->
+  <div class="progress-bar">
+    <span class="active"></span>
+    <span class="active"></span>
+  </div>
+
+  <!-- ══ FORM CONTAINER (full-width) ══ -->
+  <div class="form-container">
+    <div class="form-scan"></div>
 
     <form method="POST">
-        {% csrf_token %}
+      {% csrf_token %}
 
-        <h3>Account Information</h3>
-        {{ user_form.as_p }}
+      <div class="form-grid">
+        <!-- LEFT COLUMN: Account -->
+        <div class="form-section">
+          <div class="section-label">
+            <span class="section-num">1</span>
+            <span class="section-icon">&#9786;</span>
+            Account Information
+          </div>
+          {{ user_form.as_p }}
+        </div>
 
-        <h3>Health Information</h3>
-        {{ profile_form.as_p }}
+        <!-- RIGHT COLUMN: Health -->
+        <div class="form-section">
+          <div class="section-label">
+            <span class="section-num">2</span>
+            <span class="section-icon">&#9829;</span>
+            Health Information
+          </div>
+          {{ profile_form.as_p }}
+        </div>
 
-        <button type="submit">Register</button>
+        <!-- SUBMIT — spans both columns -->
+        <div class="submit-section">
+          <button type="submit">Create Account &rarr;</button>
+        </div>
+      </div>
     </form>
+  </div>
+
+  <!-- ══ FOOTER ══ -->
+  <div class="page-footer">
+    <p>Already have an account? <a href="/login/">Sign in here</a></p>
+    <div class="info-bar">
+      <span>SAFE v2.0</span>
+      <span class="info-dot"></span>
+      <span>End-to-End Encrypted</span>
+      <span class="info-dot"></span>
+      <span>HIPAA Compliant</span>
+    </div>
+  </div>
+
+</div><!-- /page-shell -->
+
+<script>
+  // Generate DNA helix dots
+  const dnaStrand = document.getElementById('dnaStrand');
+  if (dnaStrand) {
+    for (let i = 0; i < 22; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'dna-dot';
+      dot.style.top = (i * 15) + 'px';
+      dot.style.left = '10px';
+      dot.style.animationDelay = (i * 0.15) + 's';
+      dnaStrand.appendChild(dot);
+    }
+  }
+</script>
 </body>
 </html>

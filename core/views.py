@@ -1,9 +1,8 @@
 from django.shortcuts import render
-from .email_engine import send_severity_email
-
-# Create your views here.
+from .email_engine import send_welcome_email, send_severity_email
 from django.shortcuts import render, redirect
-from django.contrib.auth import login
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 from django.contrib.auth.models import User
 from .forms import UserRegistrationForm, HealthProfileForm
 from .models import HealthProfile
@@ -21,6 +20,7 @@ def register(request):
             profile = profile_form.save(commit=False)
             profile.user = user
             profile.save()
+            send_welcome_email(user.email, user.username)
             send_severity_email(user.email, profile.severity)
 
             login(request, user)
@@ -77,3 +77,22 @@ def generate_chatbot_response(message):
         doctor = "If symptoms continue, consider visiting a General Physician."
 
     return empathy + doctor
+def user_login(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect("dashboard")
+        else:
+            messages.error(request, "Invalid credentials")
+
+    return render(request, "login.html")
+
+
+def user_logout(request):
+    logout(request)
+    return redirect("login")

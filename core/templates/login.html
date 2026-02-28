@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>SAFE Login</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0a0c0f;
+    --surface: #111418;
+    --surface2: #161a1f;
+    --border: #1e2530;
+    --border-hi: #2a3040;
+    --accent: #c8f53a;
+    --accent-soft: #d4f760;
+    --accent-dim: rgba(200, 245, 58, 0.12);
+    --accent-glow: rgba(200, 245, 58, 0.25);
+    --text: #e8edf5;
+    --muted: #5a6478;
+    --error: #ff5e5e;
+    --cyan: #4dd9e8;
+    --pink: #ff6fa8;
+  }
+  body {
+    min-height: 100vh;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+    color: var(--text);
+    overflow: hidden;
+    position: relative;
+  }
+  /* ── BACKGROUND LAYERS ── */
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(200, 245, 58, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200, 245, 58, 0.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+  }
+  /* Glow blob */
+  body::after {
+    content: '';
+    position: fixed;
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(200, 245, 58, 0.06) 0%, rgba(77, 217, 232, 0.02) 40%, transparent 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  /* Noise overlay */
+  .noise {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  /* ── FLOATING HEALTHCARE ICONS ── */
+  .float-icons {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .float-icon {
+    position: absolute;
+    font-size: 24px;
+    opacity: 0;
+    animation: floatUp linear infinite;
+    filter: blur(0.5px);
+  }
+  @keyframes floatUp {
+    0% {
+      opacity: 0;
+      transform: translateY(100vh) rotate(0deg) scale(0.8);
+    }
+    10% { opacity: 0.12; }
+    90% { opacity: 0.12; }
+    100% {
+      opacity: 0;
+      transform: translateY(-10vh) rotate(360deg) scale(1.1);
+    }
+  }
+  .float-icon:nth-child(1)  { left: 5%;  animation-duration: 18s; animation-delay: 0s; font-size: 20px; }
+  .float-icon:nth-child(2)  { left: 15%; animation-duration: 22s; animation-delay: 3s; font-size: 18px; }
+  .float-icon:nth-child(3)  { left: 25%; animation-duration: 20s; animation-delay: 6s; font-size: 22px; }
+  .float-icon:nth-child(4)  { left: 38%; animation-duration: 24s; animation-delay: 1s; font-size: 16px; }
+  .float-icon:nth-child(5)  { left: 50%; animation-duration: 19s; animation-delay: 8s; font-size: 20px; }
+  .float-icon:nth-child(6)  { left: 62%; animation-duration: 21s; animation-delay: 4s; font-size: 24px; }
+  .float-icon:nth-child(7)  { left: 72%; animation-duration: 23s; animation-delay: 10s; font-size: 18px; }
+  .float-icon:nth-child(8)  { left: 82%; animation-duration: 17s; animation-delay: 2s; font-size: 20px; }
+  .float-icon:nth-child(9)  { left: 90%; animation-duration: 25s; animation-delay: 7s; font-size: 16px; }
+  .float-icon:nth-child(10) { left: 10%; animation-duration: 20s; animation-delay: 12s; font-size: 22px; }
+  .float-icon:nth-child(11) { left: 45%; animation-duration: 26s; animation-delay: 5s; font-size: 14px; }
+  .float-icon:nth-child(12) { left: 75%; animation-duration: 19s; animation-delay: 9s; font-size: 20px; }
+  /* ── HEARTBEAT LINE (LEFT SIDE) ── */
+  .heartbeat-bg {
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 160px;
+    height: 400px;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.15;
+  }
+  .heartbeat-bg svg {
+    width: 100%;
+    height: 100%;
+  }
+  .hb-line {
+    stroke: var(--accent);
+    stroke-width: 1.5;
+    fill: none;
+    stroke-dasharray: 600;
+    stroke-dashoffset: 600;
+    animation: drawHB 4s 1s ease forwards;
+  }
+  @keyframes drawHB {
+    to { stroke-dashoffset: 0; }
+  }
+  /* ── HEARTBEAT LINE (RIGHT SIDE) ── */
+  .heartbeat-bg-right {
+    position: fixed;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%) scaleX(-1);
+    width: 160px;
+    height: 400px;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.1;
+  }
+  .heartbeat-bg-right svg {
+    width: 100%;
+    height: 100%;
+  }
+  /* ── DNA HELIX (DECORATIVE) ── */
+  .dna-helix {
+    position: fixed;
+    right: 60px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.06;
+  }
+  .dna-strand {
+    width: 40px;
+    height: 300px;
+    position: relative;
+  }
+  .dna-dot {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: dnaBob 3s ease-in-out infinite;
+  }
+  @keyframes dnaBob {
+    0%, 100% { transform: translateX(0); opacity: 0.6; }
+    50%      { transform: translateX(18px); opacity: 1; }
+  }
+  .dna-dot:nth-child(even) {
+    animation-name: dnaBobReverse;
+    background: var(--cyan);
+  }
+  @keyframes dnaBobReverse {
+    0%, 100% { transform: translateX(18px); opacity: 0.6; }
+    50%      { transform: translateX(0); opacity: 1; }
+  }
+  /* ── PULSE RING (TOP-LEFT CORNER) ── */
+  .pulse-ring-deco {
+    position: fixed;
+    top: 80px;
+    left: 80px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .pulse-ring-deco .ring {
+    width: 80px;
+    height: 80px;
+    border: 1px solid rgba(200, 245, 58, 0.15);
+    border-radius: 50%;
+    position: absolute;
+    top: 0; left: 0;
+    animation: ringExpand 4s ease-out infinite;
+  }
+  .pulse-ring-deco .ring:nth-child(2) { animation-delay: 1.3s; }
+  .pulse-ring-deco .ring:nth-child(3) { animation-delay: 2.6s; }
+  @keyframes ringExpand {
+    0%   { transform: scale(0.3); opacity: 0.6; }
+    100% { transform: scale(2.2); opacity: 0; }
+  }
+  .pulse-ring-deco .core {
+    width: 10px;
+    height: 10px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: absolute;
+    top: 35px; left: 35px;
+    box-shadow: 0 0 12px var(--accent-glow);
+    animation: corePulse 2s infinite;
+  }
+  @keyframes corePulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50%      { transform: scale(0.7); opacity: 0.5; }
+  }
+  /* ── CROSS MARKERS (healthcare) ── */
+  .cross-markers {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .cross-mark {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    opacity: 0;
+    animation: crossFade 6s ease-in-out infinite;
+  }
+  .cross-mark::before,
+  .cross-mark::after {
+    content: '';
+    position: absolute;
+    background: var(--accent);
+    border-radius: 1px;
+  }
+  .cross-mark::before {
+    width: 2px;
+    height: 16px;
+    left: 7px;
+    top: 0;
+  }
+  .cross-mark::after {
+    width: 16px;
+    height: 2px;
+    left: 0;
+    top: 7px;
+  }
+  @keyframes crossFade {
+    0%, 100% { opacity: 0; transform: rotate(0deg); }
+    50%      { opacity: 0.12; transform: rotate(90deg); }
+  }
+  .cross-mark:nth-child(1) { top: 12%; right: 18%; animation-delay: 0s; }
+  .cross-mark:nth-child(2) { bottom: 20%; left: 12%; animation-delay: 2s; }
+  .cross-mark:nth-child(3) { top: 35%; left: 8%; animation-delay: 4s; }
+  .cross-mark:nth-child(4) { bottom: 10%; right: 10%; animation-delay: 1s; }
+  .cross-mark:nth-child(5) { top: 60%; right: 6%; animation-delay: 3s; }
+  /* ── MAIN CARD ── */
+  .card {
+    position: relative;
+    z-index: 1;
+    width: 440px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 52px 44px 44px;
+    animation: rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+    box-shadow: 0 20px 80px rgba(0,0,0,0.4), 0 0 80px rgba(200,245,58,0.03);
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    border-radius: 8px 8px 0 0;
+    background: linear-gradient(90deg, transparent, var(--accent), var(--cyan), transparent);
+  }
+  /* Corner accent lines */
+  .card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(200,245,58,0.08), transparent);
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  /* ── SAFE LOGO / ICON ── */
+  .safe-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 24px;
+    position: relative;
+    animation: rise 0.6s 0.05s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .safe-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+  .shield-path {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1.5;
+    stroke-dasharray: 200;
+    stroke-dashoffset: 200;
+    animation: drawShield 1.5s 0.5s ease forwards;
+  }
+  .cross-path {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 2;
+    stroke-dasharray: 40;
+    stroke-dashoffset: 40;
+    animation: drawShield 0.8s 1.5s ease forwards;
+  }
+  @keyframes drawShield {
+    to { stroke-dashoffset: 0; }
+  }
+  .safe-icon-glow {
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(200,245,58,0.12) 0%, transparent 70%);
+    animation: iconGlow 3s ease-in-out infinite;
+  }
+  @keyframes iconGlow {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50%      { opacity: 1; transform: scale(1.1); }
+  }
+  /* ── BADGE ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 28px;
+    animation: rise 0.6s 0.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .badge-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: relative;
+    animation: pulse 2s infinite;
+  }
+  .badge-dot::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 1px solid rgba(200,245,58,0.3);
+    animation: badgeRing 2s infinite;
+  }
+  @keyframes badgeRing {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50%      { transform: scale(1.8); opacity: 0; }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  /* ── HEADING ── */
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 38px;
+    font-weight: 400;
+    line-height: 1;
+    color: var(--text);
+    margin-bottom: 6px;
+    animation: rise 0.6s 0.15s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .subtitle {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    margin-bottom: 36px;
+    animation: rise 0.6s 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  /* ── MINI HEARTBEAT INLINE ── */
+  .mini-heartbeat {
+    display: inline-block;
+    vertical-align: middle;
+    width: 60px;
+    height: 14px;
+    margin-left: 6px;
+    opacity: 0.4;
+  }
+  .mini-heartbeat svg {
+    width: 100%;
+    height: 100%;
+  }
+  .mini-hb-line {
+    stroke: var(--accent);
+    stroke-width: 1.5;
+    fill: none;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: drawHB 2s 1.2s ease forwards;
+  }
+  /* ── FORM FIELDS ── */
+  .field {
+    margin-bottom: 20px;
+    animation: rise 0.6s 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .field:last-of-type {
+    animation-delay: 0.3s;
+  }
+  label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .label-icon {
+    font-size: 12px;
+    opacity: 0.5;
+  }
+  .input-wrap {
+    position: relative;
+  }
+  input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    padding: 14px 16px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    -webkit-appearance: none;
+  }
+  input::placeholder { color: var(--muted); }
+  input:focus {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+    box-shadow: 0 0 0 3px rgba(200, 245, 58, 0.08), 0 0 24px rgba(200, 245, 58, 0.04);
+  }
+  /* Focus scan line on inputs */
+  .input-scan {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+    border-radius: 0 0 6px 6px;
+  }
+  input:focus ~ .input-scan {
+    transform: scaleX(1);
+  }
+  /* ── SUBMIT BUTTON ── */
+  button[type="submit"] {
+    width: 100%;
+    margin-top: 32px;
+    padding: 16px;
+    background: var(--accent);
+    color: #0a0c0f;
+    border: none;
+    border-radius: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    animation: rise 0.6s 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+    position: relative;
+    overflow: hidden;
+  }
+  button[type="submit"]::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.5s;
+  }
+  button[type="submit"]:hover::after {
+    transform: translateX(100%);
+  }
+  button[type="submit"]:hover {
+    background: #d8ff50;
+    box-shadow: 0 0 40px rgba(200, 245, 58, 0.35), 0 4px 20px rgba(0,0,0,0.3);
+    transform: translateY(-2px);
+  }
+  button[type="submit"]:active { transform: translateY(0); }
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 28px 0 0;
+  }
+  /* ── FOOTER ── */
+  .footer {
+    margin-top: 24px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    animation: rise 0.6s 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .footer a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: opacity 0.2s, text-shadow 0.2s;
+    position: relative;
+  }
+  .footer a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+  }
+  .footer a:hover::after {
+    transform: scaleX(1);
+  }
+  .footer a:hover {
+    opacity: 0.85;
+    text-shadow: 0 0 12px rgba(200,245,58,0.3);
+  }
+  /* ── ERROR MESSAGE ── */
+  .error-msg {
+    margin-top: 16px;
+    padding: 12px 16px;
+    border: 1px solid rgba(255, 94, 94, 0.3);
+    border-radius: 6px;
+    border-left: 3px solid var(--error);
+    background: rgba(255, 94, 94, 0.06);
+    color: var(--error);
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    animation: shakeIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  @keyframes shakeIn {
+    0%   { opacity: 0; transform: translateX(-8px); }
+    40%  { transform: translateX(4px); }
+    70%  { transform: translateX(-2px); }
+    100% { opacity: 1; transform: translateX(0); }
+  }
+  .error-icon {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,94,94,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+  }
+  /* ── BOTTOM INFO BAR ── */
+  .info-bar {
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    opacity: 0.5;
+    animation: rise 0.6s 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .info-bar-dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--muted);
+  }
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  /* ── RESPONSIVE ── */
+  @media (max-width: 500px) {
+    .card {
+      width: calc(100% - 32px);
+      padding: 40px 28px 36px;
+    }
+    h1 { font-size: 30px; }
+    .heartbeat-bg, .heartbeat-bg-right, .dna-helix, .pulse-ring-deco { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<!-- Floating healthcare icons -->
+<div class="float-icons">
+  <span class="float-icon">&#9829;</span>
+  <span class="float-icon">&#9878;</span>
+  <span class="float-icon">&#10010;</span>
+  <span class="float-icon">&#9733;</span>
+  <span class="float-icon">&#9829;</span>
+  <span class="float-icon">&#10010;</span>
+  <span class="float-icon">&#9878;</span>
+  <span class="float-icon">&#9733;</span>
+  <span class="float-icon">&#10010;</span>
+  <span class="float-icon">&#9829;</span>
+  <span class="float-icon">&#9878;</span>
+  <span class="float-icon">&#10010;</span>
+</div>
+<!-- Healthcare cross markers -->
+<div class="cross-markers">
+  <div class="cross-mark"></div>
+  <div class="cross-mark"></div>
+  <div class="cross-mark"></div>
+  <div class="cross-mark"></div>
+  <div class="cross-mark"></div>
+</div>
+<!-- Pulse ring decoration -->
+<div class="pulse-ring-deco">
+  <div class="ring"></div>
+  <div class="ring"></div>
+  <div class="ring"></div>
+  <div class="core"></div>
+</div>
+<!-- Heartbeat line (left) -->
+<div class="heartbeat-bg">
+  <svg viewBox="0 0 160 400" preserveAspectRatio="none">
+    <path class="hb-line" d="M80,0 L80,100 L60,120 L100,140 L40,160 L100,180 L80,200 L80,250 L60,270 L100,290 L40,310 L100,330 L80,350 L80,400"/>
+  </svg>
+</div>
+<!-- Heartbeat line (right) -->
+<div class="heartbeat-bg-right">
+  <svg viewBox="0 0 160 400" preserveAspectRatio="none">
+    <path class="hb-line" style="stroke: rgba(77,217,232,0.6); animation-delay: 2s;" d="M80,0 L80,80 L55,105 L105,130 L55,155 L80,180 L80,260 L55,285 L105,310 L55,335 L80,360 L80,400"/>
+  </svg>
+</div>
+<!-- DNA helix decoration -->
+<div class="dna-helix">
+  <div class="dna-strand" id="dnaStrand"></div>
+</div>
+<!-- MAIN CARD -->
+<div class="card">
+  <!-- Shield + Cross icon -->
+  <div class="safe-icon">
+    <div class="safe-icon-glow"></div>
+    <svg viewBox="0 0 48 48">
+      <path class="shield-path" d="M24,4 L40,12 C40,12 42,28 24,44 C6,28 8,12 8,12 Z"/>
+      <line class="cross-path" x1="24" y1="18" x2="24" y2="32"/>
+      <line class="cross-path" x1="17" y1="25" x2="31" y2="25"/>
+    </svg>
+  </div>
+  <div class="badge">
+    <span class="badge-dot"></span>
+    Secure Access
+  </div>
+  <h1>Welcome<br>back<em>.</em></h1>
+  <p class="subtitle">
+    Sign in to your SAFE account
+    <span class="mini-heartbeat">
+      <svg viewBox="0 0 60 14" preserveAspectRatio="none">
+        <path class="mini-hb-line" d="M0,7 L15,7 L20,2 L25,12 L30,2 L35,12 L40,7 L60,7"/>
+      </svg>
+    </span>
+  </p>
+  <form method="POST">
+    {% csrf_token %}
+    <div class="field">
+      <label for="username">
+        <span class="label-icon">&#9786;</span>
+        Username
+      </label>
+      <div class="input-wrap">
+        <input type="text" id="username" name="username" placeholder="Enter username" required autocomplete="username">
+        <div class="input-scan"></div>
+      </div>
+    </div>
+    <div class="field">
+      <label for="password">
+        <span class="label-icon">&#9919;</span>
+        Password
+      </label>
+      <div class="input-wrap">
+        <input type="password" id="password" name="password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" required autocomplete="current-password">
+        <div class="input-scan"></div>
+      </div>
+    </div>
+    <button type="submit">Sign In &rarr;</button>
+  </form>
+  {% for message in messages %}
+  <div class="error-msg">
+    <span class="error-icon">!</span>
+    {{ message }}
+  </div>
+  {% endfor %}
+  <div class="divider"></div>
+  <p class="footer">
+    No account yet? <a href="/register/">Create one here</a>
+  </p>
+  <div class="info-bar">
+    <span>SAFE v2.0</span>
+    <span class="info-bar-dot"></span>
+    <span>256-bit Encrypted</span>
+    <span class="info-bar-dot"></span>
+    <span>HIPAA Compliant</span>
+  </div>
+</div>
+<script>
+  // Generate DNA helix dots dynamically
+  const dnaStrand = document.getElementById('dnaStrand');
+  if (dnaStrand) {
+    for (let i = 0; i < 20; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'dna-dot';
+      dot.style.top = (i * 15) + 'px';
+      dot.style.left = '10px';
+      dot.style.animationDelay = (i * 0.15) + 's';
+      dnaStrand.appendChild(dot);
+    }
+  }
+</script>
+</body>
+</html>
