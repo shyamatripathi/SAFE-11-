@@ -1049,33 +1049,82 @@
       </div>
     </div>
     <!-- CHAT -->
-    <div class="panel">
-      <div class="panel-scan"></div>
-      <div class="panel-title">SAFE AI Assistant</div>
-      <div class="chat-suggestions">
-        <span class="chat-suggestion" onclick="setSuggestion('What does my severity level mean?')">What does my severity mean?</span>
-        <span class="chat-suggestion" onclick="setSuggestion('How can I improve my BMI?')">Improve my BMI</span>
-        <span class="chat-suggestion" onclick="setSuggestion('What lifestyle changes do you recommend?')">Lifestyle tips</span>
+<div class="panel">
+  <div class="panel-scan"></div>
+
+  <div class="panel-title">SAFE AI Assistant</div>
+
+  <!-- Quick Suggestions -->
+  <div class="chat-suggestions">
+    <span class="chat-suggestion" onclick="setSuggestion('What does my severity level mean?')">
+      What does my severity mean?
+    </span>
+
+    <span class="chat-suggestion" onclick="setSuggestion('How can I improve my BMI?')">
+      Improve my BMI
+    </span>
+
+    <span class="chat-suggestion" onclick="setSuggestion('What lifestyle changes do you recommend?')">
+      Lifestyle tips
+    </span>
+
+    <span class="chat-suggestion" onclick="setSuggestion('I feel dizzy and tired')">
+      Feeling dizzy
+    </span>
+  </div>
+
+
+  <!-- Chat Form -->
+  <form method="POST" class="chat-form">
+
+    {% csrf_token %}
+
+    <!-- Pass user health context to backend -->
+    <input type="hidden" name="user_severity" value="{{ profile.severity }}">
+    <input type="hidden" name="user_symptoms" value="{{ profile.symptoms }}">
+    <input type="hidden" name="user_bmi" value="{{ profile.bmi }}">
+    <input type="hidden" name="user_age" value="{{ profile.age }}">
+
+    <!-- User Input -->
+    <input
+      type="text"
+      name="chat_message"
+      id="chatInput"
+      class="chat-input"
+      placeholder="Describe how you're feeling..."
+      autocomplete="off"
+      required
+    >
+
+    <!-- Send Button -->
+    <button type="submit" class="chat-send">
+      Send &#8599;
+    </button>
+
+  </form>
+
+
+  <!-- Chat Response Area -->
+  <div id="chatResponseArea">
+
+    {% if chatbot_response %}
+
+    <div class="chat-response">
+
+      <div class="chat-response-label">
+        <span class="ai-dot"></span>
+        SAFE AI
       </div>
-      <form method="POST" class="chat-form">
-        {% csrf_token %}
-        <input
-          type="text"
-          name="chat_message"
-          id="chatInput"
-          class="chat-input"
-          placeholder="Describe how you're feeling..."
-          autocomplete="off"
-        >
-        <button type="submit" class="chat-send">Send &#8599;</button>
-      </form>
-      {% if chatbot_response %}
-      <div class="chat-response">
-        <div class="chat-response-label"><span class="ai-dot"></span> SAFE AI</div>
-        {{ chatbot_response }}
-      </div>
-      {% endif %}
+
+      {{ chatbot_response }}
+
     </div>
+
+    {% endif %}
+
+  </div>
+
+</div>
   </div>
   <!-- FOOTER STATUS BAR -->
   <div class="footer-bar">

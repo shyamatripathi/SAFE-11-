@@ -37,6 +37,13 @@ class HealthProfileForm(forms.ModelForm):
         fields = ['age', 'height', 'weight', 'symptoms', 'heart_history']
 
 class HealthUpdateForm(forms.ModelForm):
+
+    symptoms = forms.MultipleChoiceField(
+        choices=SYMPTOM_CHOICES,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+
     class Meta:
         model = HealthProfile
         fields = ['age', 'height', 'weight', 'symptoms', 'heart_history']

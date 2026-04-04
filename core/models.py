@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from .ml_model import predict_severity
 
 class HealthProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -15,7 +15,7 @@ class HealthProfile(models.Model):
 
     severity = models.CharField(max_length=20, blank=True)
 
-    # ---------- Utility Methods ----------
+    ######Utility Methods
 
     def calculate_bmi(self):
         if self.height and self.weight:
@@ -43,7 +43,7 @@ class HealthProfile(models.Model):
         if self.heart_history:
             score += 3
 
-        # ---------- Symptom-based scoring ----------
+        #Symptom-based scoring 
 
         symptom_weights = {
             "chest pain": 3,
@@ -62,7 +62,7 @@ class HealthProfile(models.Model):
             if symptom in symptom_text:
                 score += weight
 
-        # ---------- Final Severity Classification ----------
+        #Final Severity Classification
 
         if score >= 8:
             return "High"
@@ -71,7 +71,17 @@ class HealthProfile(models.Model):
         else:
             return "Mild"
 
-    def save(self, *args, **kwargs):
+    def save(self,*args,**kwargs):
+
         self.bmi = self.calculate_bmi()
-        self.severity = self.calculate_severity()
-        super().save(*args, **kwargs)
+
+        symptom_list = [s.strip() for s in self.symptoms.split(",")]
+
+        self.severity = predict_severity(
+            self.age,
+            self.bmi,
+            symptom_list,
+            self.heart_history
+        )
+
+        super().save(*args,**kwargs)

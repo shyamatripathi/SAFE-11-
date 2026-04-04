@@ -6,8 +6,9 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from .forms import UserRegistrationForm, HealthProfileForm
 from .models import HealthProfile
-from .forms import HealthUpdateForm
+from .forms import HealthUpdateForm#added later for update health form
 from django.contrib.auth.decorators import login_required
+from .safe_chatbot import safe_chatbot
 
 
 def register(request):
@@ -45,22 +46,39 @@ def register(request):
 
 @login_required
 def dashboard(request):
+
     profile = HealthProfile.objects.get(user=request.user)
+
     chatbot_response = None
 
     if request.method == "POST":
-        message = request.POST.get("chat_message", "")
-        chatbot_response = generate_chatbot_response(message)
 
-    # Split symptoms string into a list for pill display
-    symptom_list = [s.strip() for s in profile.symptoms.split(',') if s.strip()]
+        message = request.POST.get("chat_message")
 
-    return render(request, "dashboard.html", {
-        "profile": profile,
-        "chatbot_response": chatbot_response,
-        "symptom_list": symptom_list,
+        severity = request.POST.get("user_severity")
+        symptoms = request.POST.get("user_symptoms")
+        bmi = request.POST.get("user_bmi")
+        age = request.POST.get("user_age")
+
+        if message:
+            chatbot_response = safe_chatbot(
+                message,
+                severity,
+                symptoms,
+                bmi,
+                age
+            )
+
+    symptom_list = []
+
+    if profile.symptoms:
+        symptom_list = [s.strip() for s in profile.symptoms.split(",")]
+
+    return render(request,"dashboard.html",{
+        "profile":profile,
+        "chatbot_response":chatbot_response,
+        "symptom_list":symptom_list
     })
-
 
 def generate_chatbot_response(message):
     message = message.lower()
@@ -107,16 +125,35 @@ def user_logout(request):
     return redirect("login")
 @login_required
 def update_health(request):
-    profile = HealthProfile.objects.get(user=request.user)
+
+    user = request.user
+    profile = HealthProfile.objects.get(user=user)
 
     if request.method == "POST":
-        form = HealthUpdateForm(request.POST, instance=profile)
+        user_form = HealthUpdateForm(request.POST, instance=user)
+        profile_form = HealthUpdateForm(request.POST, instance=profile)
 
-        if form.is_valid():
-            form.save()
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
             return redirect("dashboard")
 
     else:
-        form = HealthUpdateForm(instance=profile)
+        user_form = HealthUpdateForm(instance=user)
+        profile_form = HealthUpdateForm(instance=profile)
 
-    return render(request, "update_health.html", {"form": form})
+    return render(request, "update_health.html", {
+        "user_form": user_form,
+        "profile_form": profile_form
+    })
+
+def chat_api(request):
+
+    message = request.GET.get("message")
+
+    if not message:
+        return JsonResponse({"reply": "Please enter a message."})
+
+    reply = safe_assistant(message)
+
+    return JsonResponse({"reply": reply})

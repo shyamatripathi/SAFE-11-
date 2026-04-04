@@ -1,0 +1,65 @@
+age,height,weight,bmi,symptoms,heart_history,severity
+34,135.0,60.0,32.92181069958848,"['chest pain', 'shortness of breath']",True,High
+67,155.0,60.0,24.97398543184183,"dizziness, headache,",True,Moderate
+56,155.0,60.0,24.97398543184183,headache,True,Moderate
+145,155.0,60.0,24.97398543184183,"headache, dizziness",True,Moderate
+44,44.0,44.0,227.27272727272728,na,True,Moderate
+22,155.0,60.0,24.97398543184183,na,False,Mild
+50,160.0,60.0,23.437499999999996,heugp8uhglkdncbs-we7rwujr,False,Mild
+300,160.0,60.0,23.437499999999996,"seizure, headache, dizziness",True,Moderate
+50,155.0,40.0,16.649323621227886,na,False,Mild
+20,175.0,78.0,25.46938775510204,"headache, cold, cough",False,Mild
+19,160.0,42.0,16.406249999999996,"headache, cough",True,Moderate
+40,160.0,50.0,19.531249999999996,headache,True,Moderate
+23,168.0,48.0,17.006802721088437,nill,False,Mild
+22,155.0,60.0,24.97398543184183,headache,True,Moderate
+22,155.0,60.0,24.97398543184183,headache,True,Moderate
+22,155.0,60.0,24.97398543184183,"chest pain, headache, dizziness, nausea",True,High
+24,155.0,64.0,26.638917793964616,na,True,Moderate
+46,160.0,63.0,24.609374999999996,headache,False,Mild
+20,160.0,60.0,23.437499999999996,helthy,False,Mild
+20,160.0,60.0,23.437499999999996,Healthy fulki,False,Mild
+20,155.0,60.0,24.97398543184183,headache,False,Mild
+23,165.0,70.0,25.71166207529844,headache,False,Mild
+21,165.0,60.0,22.03856749311295,.,False,Mild
+20,177.0,70.0,22.34351559258195,everything is perfect,True,Mild
+21,178.0,58.0,18.30576947355132,everything is perfect,True,Mild
+20,166.0,65.0,23.588329220496444,headache,False,Mild
+23,167.0,68.0,24.38237297859371,Mood Swings,True,Mild
+22,162.0,75.0,28.577960676726104,anemia,False,Mild
+22,162.0,75.0,28.577960676726104,anemia,False,Mild
+22,162.0,75.0,28.577960676726104,anemia,False,Mild
+22,162.0,75.0,28.577960676726104,anemia,False,Mild
+23,170.0,65.0,22.49134948096886,headache,False,Mild
+22,158.0,65.0,26.037493991347535,headache,False,Mild
+22,170.0,62.0,21.453287197231838,NA,False,Mild
+21,173.0,56.0,18.710949246550168,NA,False,Mild
+25,160.0,60.0,23.437499999999996,"fatigue, diarrhea",False,Mild
+22,165.0,60.0,22.03856749311295,"cold, cough, fatigue, headache",False,Moderate
+22,156.0,40.0,16.43655489809336,headache,True,Moderate
+20,170.0,70.0,24.221453287197235,Nothing . Just fit and fine,False,Mild
+20,170.0,70.0,24.221453287197235,Nothing . Just fit and fine,False,Mild
+22,155.0,60.0,24.97398543184183,"fever, headache, vomiting",True,High
+21,164.0,56.0,20.820939916716245,"headache, fatigue",False,Mild
+21,155.0,41.0,17.065556711758582,"headache, dizziness",False,Mild
+21,155.0,54.0,22.476586888657646,fatigue,False,Mild
+21,155.0,54.0,22.476586888657646,fatigue,False,Mild
+20,155.0,50.0,20.811654526534856,cold,False,Mild
+22,155.0,50.0,20.811654526534856,,False,Mild
+22,155.0,50.0,20.811654526534856,,False,Mild
+23,161.0,65.0,25.076193048107708,"shortness of breath, fatigue",False,Moderate
+22,181.0,79.0,24.114038033027075,"shortness of breath, headache, dizziness, fatigue",False,Moderate
+23,181.0,79.0,24.114038033027075,"headache, dizziness, fatigue",False,Moderate
+21,155.0,59.0,24.55775234131113,"shortness of breath, cold, fatigue",False,Moderate
+21,155.0,59.0,24.55775234131113,"shortness of breath, cold, fatigue",False,Moderate
+21,155.0,59.0,24.55775234131113,"shortness of breath, cold, fatigue",False,Moderate
+19,183.0,58.0,17.319119710949863,headache,False,Mild
+22,173.0,59.0,19.713321527615356,,False,Mild
+22,173.0,59.0,19.713321527615356,,False,Mild
+22,173.0,59.0,19.713321527615356,,False,Mild
+96,155.0,64.0,26.638917793964616,"chest pain, fever, cough, cold, headache",False,High
+22,178.0,51.0,16.09645246812271,,False,Mild
+21,155.0,42.0,17.48178980228928,"chest pain, headache, fatigue",False,Moderate
+23,157.0,50.0,20.28479857195018,cold,False,Mild
+24,155.0,45.0,18.730489073881373,cold,True,Moderate
+24,155.0,45.0,18.730489073881373,"['shortness of breath', 'fever', 'fatigue', 'cold']",False,Moderate
