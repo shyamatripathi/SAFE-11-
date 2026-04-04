@@ -1,7 +1,7 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 <head>
-<title>SAFE Registration</title>
+<title>SAFE — Health Profile Update</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
@@ -36,8 +36,6 @@
     position: relative;
     overflow-x: hidden;
   }
-
-  /* ── BACKGROUND LAYERS ── */
 
   body::before {
     content: '';
@@ -108,7 +106,6 @@
     50%      { -webkit-text-stroke-color: rgba(135, 206, 235, 0.13); }
   }
 
-  /* ── FLOATING HEALTHCARE ICONS ── */
   .float-icons {
     position: fixed;
     inset: 0;
@@ -145,7 +142,6 @@
   .float-icon:nth-child(11) { left: 42%; animation-duration: 28s; animation-delay: 5s; font-size: 12px; }
   .float-icon:nth-child(12) { left: 72%; animation-duration: 20s; animation-delay: 10s; font-size: 18px; }
 
-  /* ── MEDICAL CROSS MARKERS ── */
   .cross-markers {
     position: fixed;
     inset: 0;
@@ -184,7 +180,6 @@
   .cross-mark:nth-child(5) { top: 55%; right: 5%; animation-delay: 3.5s; }
   .cross-mark:nth-child(6) { top: 70%; left: 14%; animation-delay: 5.8s; }
 
-  /* ── PULSE RINGS ── */
   .pulse-rings {
     position: fixed;
     top: 100px;
@@ -214,11 +209,11 @@
   .p-core {
     width: 8px;
     height: 8px;
-    background: var(--accent);
+    background: var(--green);
     border-radius: 50%;
     position: absolute;
     top: 26px; left: 26px;
-    box-shadow: 0 0 14px var(--accent-glow);
+    box-shadow: 0 0 14px rgba(74, 222, 128, 0.4);
     animation: pCorePulse 2s infinite;
   }
 
@@ -245,7 +240,6 @@
     box-shadow: 0 0 14px rgba(135,206,235,0.3);
   }
 
-  /* ── DNA HELIX ── */
   .dna-helix {
     position: fixed;
     right: 40px;
@@ -286,6 +280,28 @@
     50%      { transform: translateX(0); opacity: 1; }
   }
 
+  /* ── LAST UPDATED BADGE ── */
+  .last-updated-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 18px;
+    animation: fadeSlideDown 0.5s 0.05s ease both;
+  }
+
+  .last-updated-bar .lu-dot {
+    width: 6px; height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(74,222,128,0.5);
+    animation: pulse 2s infinite;
+  }
+
   /* ── FULL-PAGE LAYOUT ── */
   .page-shell {
     position: relative;
@@ -296,15 +312,12 @@
     padding: 0 36px 80px;
   }
 
-  /* ══════════════════════════════════════
-     HERO HEADER — ANIMATED
-     ══════════════════════════════════════ */
+  /* ══ HERO ══ */
   .hero {
-    padding: 56px 0 40px;
+    padding: 48px 0 36px;
     text-align: center;
   }
 
-  /* Badge */
   .hero-badge {
     display: inline-flex;
     align-items: center;
@@ -312,16 +325,20 @@
     font-size: 10px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--accent-soft);
+    color: var(--green);
     margin-bottom: 24px;
     animation: fadeSlideDown 0.6s 0.1s ease both;
+    background: rgba(74,222,128,0.06);
+    border: 1px solid rgba(74,222,128,0.15);
+    padding: 6px 14px;
+    border-radius: 20px;
   }
 
   .hero-badge-dot {
     width: 6px; height: 6px;
-    background: var(--accent-soft);
+    background: var(--green);
     border-radius: 50%;
-    box-shadow: 0 0 10px var(--accent-soft);
+    box-shadow: 0 0 10px rgba(74,222,128,0.6);
     position: relative;
     animation: pulse 2s infinite;
   }
@@ -331,7 +348,7 @@
     position: absolute;
     inset: -4px;
     border-radius: 50%;
-    border: 1px solid rgba(135,206,235,0.3);
+    border: 1px solid rgba(74,222,128,0.3);
     animation: badgeRing 2s infinite;
   }
 
@@ -345,7 +362,6 @@
     50% { opacity: 0.3; }
   }
 
-  /* Shield icon */
   .hero-icon {
     width: 72px;
     height: 72px;
@@ -355,22 +371,25 @@
 
   .hero-icon svg { width: 100%; height: 100%; }
 
-  .shield-path {
+  /* Heartbeat / activity icon instead of shield */
+  .pulse-icon-path {
     fill: none;
-    stroke: var(--accent);
-    stroke-width: 1.5;
+    stroke: var(--green);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
     stroke-dasharray: 200;
     stroke-dashoffset: 200;
-    animation: drawShield 1.8s 0.3s ease forwards;
+    animation: drawShield 1.8s 0.4s ease forwards;
   }
 
-  .cross-icon-path {
+  .shield-path {
     fill: none;
-    stroke: var(--accent-soft);
-    stroke-width: 2;
-    stroke-dasharray: 40;
-    stroke-dashoffset: 40;
-    animation: drawShield 0.8s 1.8s ease forwards;
+    stroke: rgba(47,143,255,0.3);
+    stroke-width: 1;
+    stroke-dasharray: 200;
+    stroke-dashoffset: 200;
+    animation: drawShield 1.4s 0.2s ease forwards;
   }
 
   @keyframes drawShield {
@@ -381,7 +400,7 @@
     position: absolute;
     inset: -14px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(47,143,255,0.18) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(74,222,128,0.15) 0%, transparent 70%);
     animation: iconGlow 3s ease-in-out infinite;
   }
 
@@ -390,10 +409,9 @@
     50%      { opacity: 1; transform: scale(1.15); }
   }
 
-  /* Main heading */
   .hero h1 {
     font-family: 'DM Serif Display', serif;
-    font-size: clamp(34px, 5.5vw, 58px);
+    font-size: clamp(32px, 5vw, 52px);
     font-weight: 400;
     line-height: 1.12;
     color: var(--text);
@@ -403,12 +421,18 @@
   .welcome-line {
     display: block;
     animation: fadeSlideDown 0.8s 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+    font-size: clamp(13px, 1.8vw, 17px);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
   }
 
   .safe-word {
     display: inline-block;
     font-style: italic;
-    background: linear-gradient(90deg, #2f8fff, #87ceeb, #22d3ee, #2f8fff);
+    background: linear-gradient(90deg, #4ade80, #22d3ee, #2f8fff, #4ade80);
     background-size: 300% 100%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -417,7 +441,6 @@
     position: relative;
   }
 
-  /* Animated underline glow under "SAFE" */
   .safe-word::after {
     content: '';
     position: absolute;
@@ -425,7 +448,7 @@
     left: 0;
     right: 0;
     height: 2px;
-    background: linear-gradient(90deg, transparent, #2f8fff, #87ceeb, #2f8fff, transparent);
+    background: linear-gradient(90deg, transparent, #4ade80, #22d3ee, #4ade80, transparent);
     border-radius: 2px;
     animation: underlineGlow 3s ease-in-out infinite;
   }
@@ -451,7 +474,6 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* Full subtitle — word-by-word animated */
   .hero-subtitle {
     margin-top: 18px;
     font-size: clamp(12px, 1.8vw, 16px);
@@ -479,11 +501,10 @@
   .hero-subtitle .word:nth-child(5)  { animation-delay: 1.18s; }
 
   .hero-subtitle .word.amp {
-    color: var(--accent);
+    color: var(--green);
     font-weight: 500;
   }
 
-  /* Heartbeat ECG line under heading */
   .hero-ecg {
     width: 320px;
     height: 28px;
@@ -495,7 +516,7 @@
   .hero-ecg svg { width: 100%; height: 100%; }
 
   .hero-ecg-line {
-    stroke: var(--accent);
+    stroke: var(--green);
     stroke-width: 1.5;
     fill: none;
     stroke-dasharray: 500;
@@ -507,7 +528,6 @@
     to { stroke-dashoffset: 0; }
   }
 
-  /* Decorative description */
   .hero-desc {
     font-size: 12px;
     color: var(--muted);
@@ -519,13 +539,13 @@
   /* ── HERO DIVIDER ── */
   .hero-divider {
     height: 1px;
-    background: linear-gradient(90deg, transparent, var(--border), var(--accent), var(--accent-soft), var(--accent), var(--border), transparent);
+    background: linear-gradient(90deg, transparent, var(--border), var(--green), rgba(34,211,238,0.5), var(--green), var(--border), transparent);
     margin: 0 auto 44px;
     max-width: 700px;
     animation: fadeSlideUp 0.6s 1.6s ease both;
   }
 
-  /* ── PROGRESS BAR ── */
+  /* ── PROGRESS BAR — shows as "step 2 of 2" update feel ── */
   .progress-bar {
     display: flex;
     gap: 6px;
@@ -546,8 +566,8 @@
   }
 
   .progress-bar span.active {
-    background: linear-gradient(90deg, #2f8fff, #87ceeb);
-    box-shadow: 0 0 10px rgba(47,143,255,0.2);
+    background: linear-gradient(90deg, #4ade80, #22d3ee);
+    box-shadow: 0 0 10px rgba(74,222,128,0.25);
   }
 
   .progress-bar span.active::after {
@@ -563,9 +583,7 @@
     100% { transform: translateX(100%); }
   }
 
-  /* ══════════════════════════════════════
-     FORM CONTAINER — FULL WIDTH
-     ══════════════════════════════════════ */
+  /* ── FORM CONTAINER ── */
   .form-container {
     background: rgba(7, 17, 31, 0.85);
     border: 1px solid var(--border);
@@ -576,7 +594,7 @@
     position: relative;
     overflow: hidden;
     animation: rise 0.7s 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
-    box-shadow: 0 24px 80px rgba(0,0,0,0.4), 0 0 120px rgba(47,143,255,0.03);
+    box-shadow: 0 24px 80px rgba(0,0,0,0.4), 0 0 120px rgba(74,222,128,0.02);
   }
 
   .form-container::before {
@@ -585,7 +603,7 @@
     top: 0; left: 0; right: 0;
     height: 2px;
     border-radius: 14px 14px 0 0;
-    background: linear-gradient(90deg, transparent, #2f8fff, #87ceeb, #2f8fff, transparent);
+    background: linear-gradient(90deg, transparent, #4ade80, #22d3ee, #4ade80, transparent);
   }
 
   .form-container::after {
@@ -594,15 +612,41 @@
     bottom: 0; left: 0; right: 0;
     height: 1px;
     border-radius: 0 0 14px 14px;
-    background: linear-gradient(90deg, transparent, rgba(47,143,255,0.06), transparent);
+    background: linear-gradient(90deg, transparent, rgba(74,222,128,0.06), transparent);
   }
 
-  /* Scanning line */
+  /* Update notice bar inside form */
+  .update-notice {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 18px;
+    background: rgba(74,222,128,0.05);
+    border: 1px solid rgba(74,222,128,0.15);
+    border-radius: 8px;
+    margin-bottom: 32px;
+    grid-column: 1 / -1;
+    font-size: 11px;
+    color: var(--green);
+    letter-spacing: 0.08em;
+    animation: fadeSlideDown 0.5s 0.6s ease both;
+  }
+
+  .update-notice-icon {
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .update-notice strong {
+    color: var(--green);
+    font-weight: 500;
+  }
+
   .form-scan {
     position: absolute;
     left: 0; right: 0;
     height: 2px;
-    background: linear-gradient(90deg, transparent, rgba(47,143,255,0.12), transparent);
+    background: linear-gradient(90deg, transparent, rgba(74,222,128,0.1), transparent);
     pointer-events: none;
     animation: scanline 7s linear infinite;
     opacity: 0.3;
@@ -619,7 +663,6 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* ── TWO-COLUMN FORM GRID ── */
   .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -638,7 +681,6 @@
     animation-delay: 0.55s;
   }
 
-  /* ── SECTION LABELS ── */
   .section-label {
     display: flex;
     align-items: center;
@@ -662,65 +704,45 @@
   .section-num {
     width: 26px;
     height: 26px;
-    border: 1px solid var(--accent);
+    border: 1px solid var(--green);
     border-radius: 6px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     font-size: 11px;
     flex-shrink: 0;
-    color: var(--accent);
-    background: rgba(47,143,255,0.06);
+    color: var(--green);
+    background: rgba(74,222,128,0.06);
     transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
   }
 
   .section-label:hover .section-num {
-    background: rgba(47,143,255,0.14);
-    box-shadow: 0 0 16px rgba(47,143,255,0.2);
+    background: rgba(74,222,128,0.14);
+    box-shadow: 0 0 16px rgba(74,222,128,0.2);
     transform: scale(1.05);
   }
 
-  .section-icon {
-    font-size: 14px;
-    opacity: 0.5;
-  }
+  .section-icon { font-size: 14px; opacity: 0.5; }
 
-  /* ── FORM FIELD STYLES ── */
-  form p {
-    margin-bottom: 18px;
-  }
+  /* ── FORM FIELDS ── */
 
-  form p label, label {
-    display: block;
-    font-size: 10px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 8px;
-    font-family: 'DM Mono', monospace;
-    transition: color 0.2s;
-  }
-
-  form p:focus-within label {
-    color: var(--accent-soft);
-  }
-
-  form p input[type="text"],
-  form p input[type="email"],
-  form p input[type="password"],
-  form p input[type="number"],
-  form p input[type="date"],
-  form p input[type="tel"],
-  form p select,
-  form p textarea,
-  input[type="text"],
-  input[type="email"],
-  input[type="password"],
-  input[type="number"],
-  input[type="date"],
-  input[type="tel"],
-  select,
-  textarea {
+  /* Universal input styling — matches Django-rendered widgets at any nesting depth */
+  form input[type="text"],
+  form input[type="email"],
+  form input[type="password"],
+  form input[type="number"],
+  form input[type="date"],
+  form input[type="tel"],
+  form select,
+  form textarea,
+  .form-section input[type="text"],
+  .form-section input[type="email"],
+  .form-section input[type="password"],
+  .form-section input[type="number"],
+  .form-section input[type="date"],
+  .form-section input[type="tel"],
+  .form-section select,
+  .form-section textarea {
     width: 100%;
     background: rgba(2, 5, 8, 0.8);
     border: 1px solid var(--border);
@@ -733,21 +755,32 @@
     transition: border-color 0.25s, box-shadow 0.25s, background 0.25s, transform 0.15s;
     -webkit-appearance: none;
     appearance: none;
+    display: block;
+    box-sizing: border-box;
   }
 
-  form p input::placeholder, input::placeholder { color: var(--muted); }
+  form input::placeholder,
+  .form-section input::placeholder { color: var(--muted); }
 
-  form p input:focus,
-  form p select:focus,
-  form p textarea:focus,
-  input:focus, select:focus, textarea:focus {
-    border-color: var(--accent);
-    background: var(--accent-dim);
-    box-shadow: 0 0 0 3px rgba(47, 143, 255, 0.1), 0 0 28px rgba(47, 143, 255, 0.06);
+  form input[type="text"]:focus,
+  form input[type="email"]:focus,
+  form input[type="password"]:focus,
+  form input[type="number"]:focus,
+  form input[type="date"]:focus,
+  form input[type="tel"]:focus,
+  form select:focus,
+  form textarea:focus,
+  .form-section input:focus,
+  .form-section select:focus,
+  .form-section textarea:focus {
+    border-color: var(--green);
+    background: rgba(74,222,128,0.05);
+    box-shadow: 0 0 0 3px rgba(74,222,128,0.08), 0 0 28px rgba(74,222,128,0.04);
     transform: translateY(-1px);
   }
 
-  form p select, select {
+  form select,
+  .form-section select {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%233a5a7a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 14px center;
@@ -755,30 +788,64 @@
     cursor: pointer;
   }
 
-  form p select option { background: #07111f; }
+  form select option,
+  .form-section select option { background: #07111f; }
 
-  form p textarea, textarea {
+  form textarea,
+  .form-section textarea {
     resize: vertical;
     min-height: 90px;
     border-radius: 8px;
   }
 
-  form p input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
-    accent-color: #2f8fff;
+  /* Checkboxes & radios — restore normal sizing */
+  form input[type="checkbox"],
+  .form-section input[type="checkbox"] {
+    width: 16px !important;
+    height: 16px !important;
+    display: inline-block !important;
+    padding: 0 !important;
+    accent-color: #4ade80;
     margin-right: 8px;
     cursor: pointer;
     vertical-align: middle;
+    -webkit-appearance: checkbox;
+    appearance: checkbox;
   }
 
-  form p input[type="radio"] {
-    accent-color: #2f8fff;
+  form input[type="radio"],
+  .form-section input[type="radio"] {
+    width: auto !important;
+    height: auto !important;
+    display: inline-block !important;
+    padding: 0 !important;
+    accent-color: #4ade80;
     margin-right: 6px;
     cursor: pointer;
+    -webkit-appearance: radio;
+    appearance: radio;
   }
 
-  /* ── SYMPTOM CHECKBOXES GRID ── */
+  /* Django wraps field+label in <p> — ensure proper spacing */
+  form p {
+    margin-bottom: 18px;
+  }
+
+  form p label,
+  .form-section > p > label {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+    font-family: 'DM Mono', monospace;
+    transition: color 0.2s;
+  }
+
+  form p:focus-within label { color: var(--accent-soft); }
+
+  /* ── SYMPTOM CHECKBOXES ── */
   .symptoms-label {
     display: block;
     font-size: 10px;
@@ -806,9 +873,7 @@
     user-select: none;
   }
 
-  .symptom-box input[type="checkbox"],
-  .symptoms-grid .symptom-box input[type="checkbox"],
-  form .symptoms-grid .symptom-box input[type="checkbox"] {
+  .symptom-box input[type="checkbox"] {
     position: absolute !important;
     opacity: 0 !important;
     width: 0 !important;
@@ -834,14 +899,14 @@
 
   .symptom-box .symptom-label:hover {
     border-color: var(--border-hi);
-    background: rgba(47, 143, 255, 0.04);
+    background: rgba(74,222,128,0.04);
     transform: translateY(-1px);
   }
 
   .symptom-box input[type="checkbox"]:checked + .symptom-label {
-    border-color: var(--accent);
-    background: var(--accent-dim);
-    box-shadow: 0 0 0 2px rgba(47, 143, 255, 0.12), 0 0 20px rgba(47, 143, 255, 0.06);
+    border-color: var(--green);
+    background: rgba(74,222,128,0.07);
+    box-shadow: 0 0 0 2px rgba(74,222,128,0.1), 0 0 20px rgba(74,222,128,0.04);
   }
 
   .symptom-check {
@@ -858,8 +923,8 @@
   }
 
   .symptom-box input[type="checkbox"]:checked + .symptom-label .symptom-check {
-    background: var(--accent);
-    border-color: var(--accent);
+    background: var(--green);
+    border-color: var(--green);
   }
 
   .symptom-check svg {
@@ -873,27 +938,14 @@
     opacity: 1;
   }
 
-  .symptom-icon {
-    font-size: 14px;
-    opacity: 0.5;
-    transition: opacity 0.2s;
-  }
+  .symptom-icon { font-size: 14px; opacity: 0.5; transition: opacity 0.2s; }
 
-  .symptom-box input[type="checkbox"]:checked + .symptom-label .symptom-icon {
-    opacity: 1;
-  }
-
-  .symptoms-help {
-    font-size: 11px;
-    color: var(--muted);
-    margin-top: 6px;
-    letter-spacing: 0.03em;
-  }
+  .symptom-box input[type="checkbox"]:checked + .symptom-label .symptom-icon { opacity: 1; }
 
   .symptoms-counter {
     font-size: 10px;
     letter-spacing: 0.1em;
-    color: var(--accent-soft);
+    color: var(--green);
     margin-top: 8px;
     text-transform: uppercase;
     transition: color 0.2s;
@@ -936,15 +988,22 @@
     margin-top: 12px;
   }
 
+  .submit-section-hint {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 18px;
+    letter-spacing: 0.06em;
+  }
+
   button[type="submit"] {
     width: 100%;
     max-width: 440px;
     margin: 0 auto;
     display: block;
     padding: 18px 36px;
-    background: linear-gradient(90deg, #1a6fd4, #2f8fff, #4da3ff);
-    background-size: 200% 100%;
-    color: #ffffff;
+    background: linear-gradient(90deg, #16a34a, #4ade80, #22d3ee, #4ade80);
+    background-size: 300% 100%;
+    color: #020508;
     border: none;
     border-radius: 10px;
     font-family: 'DM Mono', monospace;
@@ -969,7 +1028,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(135,206,235,0.3), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
     transform: translateX(-100%);
     transition: transform 0.5s;
   }
@@ -978,8 +1037,8 @@
 
   button[type="submit"]:hover {
     box-shadow:
-      0 0 40px rgba(47, 143, 255, 0.45),
-      0 0 80px rgba(47, 143, 255, 0.12),
+      0 0 40px rgba(74,222,128,0.4),
+      0 0 80px rgba(74,222,128,0.1),
       0 6px 24px rgba(0,0,0,0.3);
     transform: translateY(-3px);
   }
@@ -1033,19 +1092,16 @@
   }
 
   .info-dot {
-    width: 3px;
-    height: 3px;
+    width: 3px; height: 3px;
     border-radius: 50%;
     background: var(--muted);
   }
 
-  /* ── SCROLLBAR ── */
   ::-webkit-scrollbar { width: 5px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
 
-  /* ── RESPONSIVE ── */
   @media (max-width: 600px) {
     .page-shell { padding: 0 14px 60px; }
     .form-container { padding: 32px 20px 36px; }
@@ -1062,7 +1118,6 @@
 <div class="bg-glow-bottom"></div>
 <div class="watermark">SAFE</div>
 
-<!-- Floating healthcare icons -->
 <div class="float-icons">
   <span class="float-icon">&#9829;</span>
   <span class="float-icon">&#9878;</span>
@@ -1078,7 +1133,6 @@
   <span class="float-icon">&#10010;</span>
 </div>
 
-<!-- Medical cross markers -->
 <div class="cross-markers">
   <div class="cross-mark"></div>
   <div class="cross-mark"></div>
@@ -1088,7 +1142,6 @@
   <div class="cross-mark"></div>
 </div>
 
-<!-- Pulse rings -->
 <div class="pulse-rings">
   <div class="p-ring"></div>
   <div class="p-ring"></div>
@@ -1103,40 +1156,37 @@
   <div class="p-core"></div>
 </div>
 
-<!-- DNA helix -->
 <div class="dna-helix">
   <div class="dna-strand" id="dnaStrand"></div>
 </div>
 
-<!-- ═══════════════════════════════════ -->
-<!-- FULL-PAGE CONTENT                  -->
-<!-- ═══════════════════════════════════ -->
 <div class="page-shell">
 
-  <!-- ══ HERO HEADER ══ -->
+  <!-- ══ HERO ══ -->
   <div class="hero">
+    <!-- Live badge -->
     <div class="hero-badge">
       <span class="hero-badge-dot"></span>
-      New Account
+      Profile Active &nbsp;·&nbsp; Sync Ready
     </div>
 
-    <!-- Animated shield icon -->
+    <!-- Activity / heartbeat icon -->
     <div class="hero-icon">
       <div class="hero-icon-glow"></div>
       <svg viewBox="0 0 48 48">
+        <!-- subtle shield outline behind -->
         <path class="shield-path" d="M24,4 L40,12 C40,12 42,28 24,44 C6,28 8,12 8,12 Z"/>
-        <line class="cross-icon-path" x1="24" y1="18" x2="24" y2="32"/>
-        <line class="cross-icon-path" x1="17" y1="25" x2="31" y2="25"/>
+        <!-- ECG pulse through center -->
+        <polyline class="pulse-icon-path" points="8,24 16,24 19,16 22,32 25,20 28,28 31,24 40,24"/>
       </svg>
     </div>
 
-    <!-- Main animated heading -->
+    <!-- Heading -->
     <h1>
-      <span class="welcome-line">Welcome to</span>
-      <span class="safe-word">SAFE</span>
+      <span class="welcome-line">Update Your</span>
+      <span class="safe-word">Health Profile</span>
     </h1>
 
-    <!-- Word-by-word animated subtitle -->
     <div class="hero-subtitle">
       <span class="word">Symptoms</span>&nbsp;
       <span class="word">Analysis</span>&nbsp;
@@ -1145,25 +1195,24 @@
       <span class="word">Engine</span>
     </div>
 
-    <!-- ECG heartbeat line -->
     <div class="hero-ecg">
       <svg viewBox="0 0 320 28" preserveAspectRatio="none">
         <path class="hero-ecg-line" d="M0,14 L50,14 L65,4 L75,24 L85,4 L100,24 L110,14 L160,14 L175,6 L185,22 L195,6 L210,22 L220,14 L320,14"/>
       </svg>
     </div>
 
-    <p class="hero-desc">Complete both sections below to create your secure health account</p>
+    <p class="hero-desc">Review and revise your account and health details — changes are applied immediately</p>
   </div>
 
   <div class="hero-divider"></div>
 
-  <!-- Progress -->
+  <!-- Progress — both filled to indicate update state -->
   <div class="progress-bar">
     <span class="active"></span>
     <span class="active"></span>
   </div>
 
-  <!-- ══ FORM CONTAINER (full-width) ══ -->
+  <!-- ══ FORM CONTAINER ══ -->
   <div class="form-container">
     <div class="form-scan"></div>
 
@@ -1171,6 +1220,13 @@
       {% csrf_token %}
 
       <div class="form-grid">
+
+        <!-- Update notice -->
+        <div class="update-notice">
+          <span class="update-notice-icon">&#9998;</span>
+          <span><strong>Editing existing record.</strong> All fields are pre-filled with your current data. Modify only what has changed.</span>
+        </div>
+
         <!-- LEFT COLUMN: Account -->
         <div class="form-section">
           <div class="section-label">
@@ -1226,16 +1282,16 @@
                     </svg>
                   </span>
                   <span class="symptom-icon">
-                    {% if checkbox.choice_label == 'Chest Pain' %};
-                    {% elif checkbox.choice_label == 'Shortness of Breath' %};
-                    {% elif checkbox.choice_label == 'Fever' %};
-                    {% elif checkbox.choice_label == 'Cough' %};
-                    {% elif checkbox.choice_label == 'Cold' %};
-                    {% elif checkbox.choice_label == 'Headache' %};
-                    {% elif checkbox.choice_label == 'Nausea' %};
-                    {% elif checkbox.choice_label == 'Dizziness' %};
-                    {% elif checkbox.choice_label == 'Fatigue' %};
-                    {% elif checkbox.choice_label == 'Vomiting' %};
+                    {% if checkbox.choice_label == 'Chest Pain' %}&#128148;
+                    {% elif checkbox.choice_label == 'Shortness of Breath' %}&#128168;
+                    {% elif checkbox.choice_label == 'Fever' %}&#129298;
+                    {% elif checkbox.choice_label == 'Cough' %}&#129494;
+                    {% elif checkbox.choice_label == 'Cold' %}&#10052;
+                    {% elif checkbox.choice_label == 'Headache' %}&#129504;
+                    {% elif checkbox.choice_label == 'Nausea' %}&#129314;
+                    {% elif checkbox.choice_label == 'Dizziness' %}&#129327;
+                    {% elif checkbox.choice_label == 'Fatigue' %}&#128564;
+                    {% elif checkbox.choice_label == 'Vomiting' %}&#129314;
                     {% endif %}
                   </span>
                   {{ checkbox.choice_label }}
@@ -1260,9 +1316,10 @@
           </p>
         </div>
 
-        <!-- SUBMIT — spans both columns -->
+        <!-- SUBMIT -->
         <div class="submit-section">
-          <button type="submit">Create Account &rarr;</button>
+          <p class="submit-section-hint">Your data is encrypted and never shared without consent</p>
+          <button type="submit">Save Changes &nbsp;&#10003;</button>
         </div>
       </div>
     </form>
@@ -1270,20 +1327,19 @@
 
   <!-- ══ FOOTER ══ -->
   <div class="page-footer">
-    <p>Already have an account? <a href="/login/">Sign in here</a></p>
+    <p>Want to go back? <a href="/dashboard/">Return to Dashboard</a></p>
     <div class="info-bar">
       <span>SAFE v2.0</span>
       <span class="info-dot"></span>
       <span>End-to-End Encrypted</span>
       <span class="info-dot"></span>
-      <span></span>
+      <span>Health Profile</span>
     </div>
   </div>
 
-</div><!-- /page-shell -->
+</div>
 
 <script>
-  // Generate DNA helix dots
   const dnaStrand = document.getElementById('dnaStrand');
   if (dnaStrand) {
     for (let i = 0; i < 22; i++) {
@@ -1296,7 +1352,6 @@
     }
   }
 
-  // Symptom counter
   function updateSymptomCounter() {
     const checkboxes = document.querySelectorAll('.symptoms-grid input[type="checkbox"]');
     let count = 0;

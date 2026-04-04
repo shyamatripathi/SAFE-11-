@@ -6,6 +6,9 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from .forms import UserRegistrationForm, HealthProfileForm
 from .models import HealthProfile
+from .forms import HealthUpdateForm
+from django.contrib.auth.decorators import login_required
+
 
 def register(request):
     if request.method == "POST":
@@ -19,6 +22,9 @@ def register(request):
 
             profile = profile_form.save(commit=False)
             profile.user = user
+            # Join the list of selected symptoms into a comma-separated string
+            symptoms_list = profile_form.cleaned_data.get('symptoms', [])
+            profile.symptoms = ', '.join(symptoms_list)
             profile.save()
             send_welcome_email(user.email, user.username)
             send_severity_email(user.email, profile.severity)
@@ -36,7 +42,6 @@ def register(request):
     })
 
 
-from django.contrib.auth.decorators import login_required
 
 @login_required
 def dashboard(request):
@@ -47,9 +52,13 @@ def dashboard(request):
         message = request.POST.get("chat_message", "")
         chatbot_response = generate_chatbot_response(message)
 
+    # Split symptoms string into a list for pill display
+    symptom_list = [s.strip() for s in profile.symptoms.split(',') if s.strip()]
+
     return render(request, "dashboard.html", {
         "profile": profile,
-        "chatbot_response": chatbot_response
+        "chatbot_response": chatbot_response,
+        "symptom_list": symptom_list,
     })
 
 
@@ -96,3 +105,18 @@ def user_login(request):
 def user_logout(request):
     logout(request)
     return redirect("login")
+@login_required
+def update_health(request):
+    profile = HealthProfile.objects.get(user=request.user)
+
+    if request.method == "POST":
+        form = HealthUpdateForm(request.POST, instance=profile)
+
+        if form.is_valid():
+            form.save()
+            return redirect("dashboard")
+
+    else:
+        form = HealthUpdateForm(instance=profile)
+
+    return render(request, "update_health.html", {"form": form})

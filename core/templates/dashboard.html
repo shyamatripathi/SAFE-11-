@@ -4,6 +4,9 @@
 <title>SAFE Dashboard</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<a href="/update-health/">
+    <button>Update Health Info</button>
+</a>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -817,6 +820,47 @@
   .severity-badge.mild .severity-badge-dot     { background: var(--green); box-shadow: 0 0 6px var(--green); }
   .severity-badge.moderate .severity-badge-dot { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
   .severity-badge.high .severity-badge-dot     { background: var(--pink); box-shadow: 0 0 6px var(--pink); }
+
+  /* ── SYMPTOM PILLS ── */
+  .symptom-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-top: 6px;
+  }
+  .symptom-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-family: var(--mono);
+    letter-spacing: 0.06em;
+    background: rgba(255, 45, 120, 0.08);
+    color: var(--pink-soft);
+    border: 1px solid rgba(255, 45, 120, 0.18);
+    transition: border-color 0.2s, background 0.2s, transform 0.15s;
+    text-transform: capitalize;
+  }
+  .symptom-pill:hover {
+    border-color: rgba(255, 45, 120, 0.4);
+    background: rgba(255, 45, 120, 0.12);
+    transform: translateY(-2px);
+  }
+  .symptom-pill-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--pink);
+    box-shadow: 0 0 6px var(--pink);
+    flex-shrink: 0;
+  }
+  .symptom-pill.none {
+    color: var(--muted);
+    background: rgba(107, 72, 120, 0.08);
+    border-color: rgba(107, 72, 120, 0.18);
+  }
 </style>
 </head>
 <body>
@@ -925,7 +969,16 @@
     <div class="stat-card">
       <div class="stat-card-icon">&#9733;</div>
       <div class="stat-label">Symptoms</div>
-      <div class="stat-value" style="font-size:15px; line-height:1.3; padding-top:4px;">{{ profile.symptoms }}</div>
+      <div class="symptom-pills">
+        {% for symptom in symptom_list %}
+        <span class="symptom-pill">
+          <span class="symptom-pill-dot"></span>
+          {{ symptom }}
+        </span>
+        {% empty %}
+        <span class="symptom-pill none">No symptoms reported</span>
+        {% endfor %}
+      </div>
     </div>
   </div>
   <div class="section-divider"></div>
