@@ -14,6 +14,8 @@ class HealthProfile(models.Model):
     heart_history = models.BooleanField(default=False)
 
     severity = models.CharField(max_length=20, blank=True)
+    last_emergency_alert = models.DateTimeField(null=True, blank=True)
+    last_email_sent = models.DateTimeField(null=True, blank=True)
 
     ######Utility Methods
 
@@ -71,17 +73,27 @@ class HealthProfile(models.Model):
         else:
             return "Mild"
 
-    def save(self,*args,**kwargs):
+    def save(self, *args, **kwargs):
 
+        # Calculate BMI
         self.bmi = self.calculate_bmi()
 
-        symptom_list = [s.strip() for s in self.symptoms.split(",")]
+        # Clean symptoms
+        symptom_list = []
+        if self.symptoms:
+            symptom_list = [s.strip().lower() for s in self.symptoms.split(",") if s.strip()]
 
-        self.severity = predict_severity(
-            self.age,
-            self.bmi,
-            symptom_list,
-            self.heart_history
-        )
+        try:
+            # ML prediction
+            self.severity = predict_severity(
+                self.age,
+                self.bmi,
+                symptom_list,
+                self.heart_history
+            )
 
-        super().save(*args,**kwargs)
+        except Exception:
+            # Fallback to rule-based method
+            self.severity = self.calculate_severity()
+
+        super().save(*args, **kwargs)

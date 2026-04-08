@@ -1075,8 +1075,7 @@
 
 
   <!-- Chat Form -->
-  <form method="POST" class="chat-form">
-
+<form id="chatForm" method="POST" class="chat-form">
     {% csrf_token %}
 
     <!-- Pass user health context to backend -->
@@ -1294,6 +1293,44 @@
       }
     }
   });
+  
+document.getElementById("chatForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const input = document.getElementById("chatInput");
+    const message = input.value;
+
+    const response = await fetch("/chat/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({
+            message: message,
+            severity: "{{ profile.severity }}",
+            symptoms: "{{ profile.symptoms }}",
+            bmi: "{{ profile.bmi }}",
+            age: "{{ profile.age }}"
+        })
+    });
+
+    const data = await response.json();
+
+    const chatArea = document.getElementById("chatResponseArea");
+
+    chatArea.innerHTML = `
+        <div class="chat-response">
+            <div class="chat-response-label">
+                <span class="ai-dot"></span> SAFE AI
+            </div>
+            ${data.response}
+        </div>
+    `;
+
+    input.value = "";
+});
+</script>
 </script>
 </body>
 </html>

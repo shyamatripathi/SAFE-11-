@@ -9,6 +9,8 @@ from .models import HealthProfile
 from .forms import HealthUpdateForm#added later for update health form
 from django.contrib.auth.decorators import login_required
 from .safe_chatbot import safe_chatbot
+from django.http import JsonResponse
+import json
 
 
 def register(request):
@@ -44,6 +46,7 @@ def register(request):
 
 
 
+
 @login_required
 def dashboard(request):
 
@@ -55,29 +58,26 @@ def dashboard(request):
 
         message = request.POST.get("chat_message")
 
-        severity = request.POST.get("user_severity")
-        symptoms = request.POST.get("user_symptoms")
-        bmi = request.POST.get("user_bmi")
-        age = request.POST.get("user_age")
-
         if message:
             chatbot_response = safe_chatbot(
-                message,
-                severity,
-                symptoms,
-                bmi,
-                age
+                user_id=request.user.id,
+                user_message=message,
+                severity=profile.severity,
+                symptoms=profile.symptoms,
+                bmi=profile.bmi,
+                age=profile.age
             )
+            print(f"Chatbot response: {chatbot_response}")    
 
+    # symptoms list for UI
     symptom_list = []
-
     if profile.symptoms:
         symptom_list = [s.strip() for s in profile.symptoms.split(",")]
 
-    return render(request,"dashboard.html",{
-        "profile":profile,
-        "chatbot_response":chatbot_response,
-        "symptom_list":symptom_list
+    return render(request, "dashboard.html", {
+        "profile": profile,
+        "chatbot_response": chatbot_response,
+        "symptom_list": symptom_list
     })
 
 def generate_chatbot_response(message):
@@ -148,12 +148,15 @@ def update_health(request):
     })
 
 def chat_api(request):
+    data = json.loads(request.body)
 
-    message = request.GET.get("message")
+    reply = safe_chatbot(
+        user_id=request.user.id,
+        user_message=data["message"],
+        severity=data["severity"],
+        symptoms=data["symptoms"],
+        bmi=data["bmi"],
+        age=data["age"]
+    )
 
-    if not message:
-        return JsonResponse({"reply": "Please enter a message."})
-
-    reply = safe_assistant(message)
-
-    return JsonResponse({"reply": reply})
+    return JsonResponse({"response": reply})

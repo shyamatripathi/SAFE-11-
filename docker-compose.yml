@@ -1,0 +1,46 @@
+version: "3.9"
+
+services:
+
+  web:
+    build: .
+    command: "gunicorn safe.wsgi:application --bind 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - db
+
+  worker:
+    build: .
+    command: "celery -A safe worker --loglevel=info"
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - db
+
+  beat:
+    build: .
+    command: "celery -A safe beat --loglevel=info"
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - db
+
+  redis:
+    image: redis:7
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: safe
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
