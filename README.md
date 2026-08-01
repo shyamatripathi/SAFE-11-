@@ -1,8 +1,13 @@
 # SAFE — Symptoms Analysis and Forecasting Engine
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21380627.svg)](https://doi.org/10.5281/zenodo.21380627)
 
-SAFE is a web application that monitors your health, predicts your risk level, and keeps you informed through automated emails and an AI-powered chatbot. You fill in your details once — age, weight, symptoms, heart history — and the system takes it from there.
+AI-assisted preventive health monitoring platform built using **Django, Machine Learning, Google Gemini, Celery, Redis and PostgreSQL**.
 
-**Live:** https://safe-11.onrender.com/login/
+SAFE estimates a user's health risk from profile information and reported symptoms, provides AI-assisted health guidance, schedules automated reminder emails, and supports contextual conversations through Google Gemini.
+
+> **Research DOI:** https://doi.org/10.5281/zenodo.21380627
+
+**Demo:** https://pro1o1.vercel.app/
 
 Built with Django, Celery, Google Gemini, and PostgreSQL.
 
